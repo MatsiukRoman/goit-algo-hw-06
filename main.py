@@ -14,7 +14,13 @@ class Name(Field):
     pass
 
 class Phone(Field):
-    pass
+    def __init__(self, value):
+        if not value.isdigit():
+           raise CheckPhoneNumber(f'Phone {value} is not digit') 
+        elif len(value) > 10:
+            raise CheckPhoneNumber(f'Phone {value} > 10 digits')
+        super().__init__(value)
+
     
 class Record:
     def __init__(self, name):
@@ -25,17 +31,11 @@ class Record:
         return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
     
     def add_phone(self,phone):
-        if len(phone) > 10:
-            raise CheckPhoneNumber(f'Phone {phone} > 10 digits')
-        else:
-            self.phones.append(Phone(phone))
+        self.phones.append(Phone(phone))
     
     def remove_phone(self, phone):
         if phone in [p.value for p in self.phones]:
             self.phones = [p for p in self.phones if p.value != phone]
-            print(f'Phone {phone} removed from contact {self.name}')
-        else:
-           print(f"Phone {phone} not found for contact {self.name}")
 
     def edit_phone(self, old_phone, new_phone):
         try:
@@ -46,15 +46,13 @@ class Record:
         for phone in self.phones:
             if phone.value == old_phone:
                 phone.value = new_phone
-            return f"Phone number changed from {old_phone} to {new_phone} for {self.name.value}"
-        return f"Phone number '{old_phone}' not found for {self.name.value}."
 
     def find_phone(self,phone):
         try:
             found_phone = next(item for item in self.phones if item.value == phone)
             return found_phone
         except Exception as e:
-            return str(f"Phone number '{phone}' not found for {self.name.value}.")
+            return str(e)
 
 
 class AddressBook(UserDict):
