@@ -17,7 +17,7 @@ class Phone(Field):
     def __init__(self, value):
         if not value.isdigit():
            raise CheckPhoneNumber(f'Phone {value} is not digit') 
-        elif len(value) > 10:
+        elif len(value) != 10:
             raise CheckPhoneNumber(f'Phone {value} > 10 digits')
         super().__init__(value)
 
